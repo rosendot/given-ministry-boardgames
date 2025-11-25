@@ -65,6 +65,11 @@ export default function CartPage() {
     const [cart, setCart] = useState<ShopifyCart | null>(null);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Get or create cart on mount
     useEffect(() => {
@@ -162,10 +167,10 @@ export default function CartPage() {
     if (loading) {
         return (
             <div className="bg-gradient-to-br from-primary via-forest-prayer to-sanctuary-green min-h-screen">
-                <div className="max-w-4xl mx-auto px-4 py-8 text-center">
-                    <div className="flex items-center justify-center py-20">
-                        <Loader2 className="w-8 h-8 animate-spin text-warm-cream" />
-                        <span className="ml-2 text-warm-cream">Loading cart...</span>
+                <div className="max-w-4xl mx-auto px-4 py-12 lg:py-16">
+                    <div className="flex flex-col items-center justify-center py-20">
+                        <Loader2 className="w-12 h-12 animate-spin text-warm-cream mb-4" />
+                        <span className="text-xl font-light text-warm-cream">Loading cart...</span>
                     </div>
                 </div>
             </div>
@@ -177,18 +182,23 @@ export default function CartPage() {
     if (cartItems.length === 0) {
         return (
             <div className="bg-gradient-to-br from-primary via-forest-prayer to-sanctuary-green min-h-screen">
-                <div className="max-w-4xl mx-auto px-4 py-8 text-center">
-                    <div className="bg-white p-12 rounded-xl shadow-lg border border-sage-green/20">
-                        <div className="bg-sage-green/20 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="max-w-4xl mx-auto px-4 py-12 lg:py-16">
+                    <div
+                        className="bg-white p-12 lg:p-16 rounded-2xl shadow-lg border border-gray-100 text-center"
+                        style={{
+                            animation: mounted ? 'fadeInUp 0.4s ease-out 0s both' : 'none'
+                        }}
+                    >
+                        <div className="bg-gradient-to-br from-sage-green/30 to-mint-whisper/20 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
                             <ShoppingCart className="w-12 h-12 text-sage-green" />
                         </div>
-                        <h1 className="text-3xl font-bold mb-4 text-deep-brown">Your Cart is Empty</h1>
-                        <p className="text-deep-brown/70 mb-8">Looks like you haven't added any games yet. Let's fix that!</p>
+                        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-4 text-deep-brown">Your Cart is Empty</h1>
+                        <p className="text-xl font-light text-gray-600 mb-10">Looks like you haven't added any games yet. Let's fix that!</p>
                         <Link
                             href="/games"
-                            className="inline-flex items-center space-x-2 bg-primary text-warm-cream px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-all duration-200 shadow-lg hover:shadow-xl group"
+                            className="inline-flex items-center gap-3 bg-primary text-warm-cream px-10 py-5 rounded-2xl text-lg font-bold tracking-tight hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 group"
                         >
-                            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300" />
                             <span>Continue Shopping</span>
                         </Link>
                     </div>
@@ -203,31 +213,42 @@ export default function CartPage() {
 
     return (
         <div className="bg-gradient-to-br from-primary via-forest-prayer to-sanctuary-green min-h-screen">
-            <div className="max-w-6xl mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto px-4 py-12 lg:py-16">
                 {/* Enhanced Header */}
-                <div className="flex items-center space-x-3 mb-8">
-                    <div className="bg-warm-cream/20 p-2 rounded-lg border border-warm-cream/30">
-                        <ShoppingCart className="w-6 h-6 text-mint-whisper" />
+                <div
+                    className="flex items-center gap-4 mb-12"
+                    style={{
+                        animation: mounted ? 'fadeInUp 0.4s ease-out 0s both' : 'none'
+                    }}
+                >
+                    <div className="bg-gradient-to-br from-warm-cream/30 to-mint-whisper/20 p-3 rounded-xl border border-warm-cream/30 shadow-sm">
+                        <ShoppingCart className="w-8 h-8 text-mint-whisper" />
                     </div>
                     <div>
-                        <h1 className="text-4xl font-bold text-warm-cream">Your Cart</h1>
-                        <p className="text-warm-cream/80">{cart?.totalQuantity || 0} {cart?.totalQuantity === 1 ? 'item' : 'items'} in your cart</p>
+                        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-warm-cream">Your Cart</h1>
+                        <p className="text-xl font-light text-warm-cream/80">{cart?.totalQuantity || 0} {cart?.totalQuantity === 1 ? 'item' : 'items'} in your cart</p>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-12">
                     {/* Cart Items */}
-                    <div className="lg:col-span-2 space-y-4">
-                        {cartItems.map(({ node: item }) => (
-                            <div key={item.id} className="bg-white p-6 rounded-xl shadow-lg border border-sage-green/20 hover:shadow-xl transition-shadow">
-                                <div className="flex items-center gap-6">
-                                    <div className="bg-gradient-to-br from-sage-green/20 to-mint-whisper w-24 h-24 rounded-lg border border-sage-green/30 flex-shrink-0 overflow-hidden">
+                    <div className="lg:col-span-2 space-y-6">
+                        {cartItems.map(({ node: item }, index) => (
+                            <div
+                                key={item.id}
+                                className="bg-white p-8 lg:p-10 rounded-2xl shadow-sm hover:shadow-lg border border-gray-100 transition-all duration-300 hover:-translate-y-1"
+                                style={{
+                                    animation: mounted ? `fadeInUp 0.4s ease-out ${0.1 + index * 0.05}s both` : 'none'
+                                }}
+                            >
+                                <div className="flex items-center gap-8">
+                                    <div className="bg-gradient-to-br from-sage-green/20 to-mint-whisper w-32 h-32 rounded-xl border border-gray-100 flex-shrink-0 overflow-hidden shadow-sm">
                                         {item.merchandise.image ? (
                                             <Image
                                                 src={item.merchandise.image.url}
                                                 alt={item.merchandise.image.altText || item.merchandise.product.title}
-                                                width={96}
-                                                height={96}
+                                                width={128}
+                                                height={128}
                                                 className="object-cover w-full h-full"
                                             />
                                         ) : null}
@@ -235,49 +256,49 @@ export default function CartPage() {
 
                                     <div className="flex-1 min-w-0">
                                         <Link href={`/games/${item.merchandise.product.handle}`} className="group">
-                                            <h3 className="font-semibold text-lg text-deep-brown group-hover:text-primary transition-colors mb-1">
+                                            <h3 className="text-2xl font-bold tracking-tight text-deep-brown group-hover:text-primary transition-colors duration-300 mb-2">
                                                 {item.merchandise.product.title}
                                             </h3>
                                         </Link>
-                                        <div className="flex items-center space-x-3 text-sm text-deep-brown/60 mb-3">
+                                        <div className="flex items-center gap-3 text-base text-gray-600 font-light mb-4">
                                             <span>${item.merchandise.price.amount} each</span>
                                         </div>
 
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center border border-sage-green/30 rounded-lg">
+                                            <div className="flex items-center border-2 border-gray-100 rounded-xl overflow-hidden shadow-sm">
                                                 <button
                                                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                    className="p-2 hover:bg-sage-green/10 transition-colors rounded-l-lg"
+                                                    className="p-3 hover:bg-sage-green/10 transition-all duration-300 hover:scale-110"
                                                     disabled={updating === item.id}
                                                 >
                                                     {updating === item.id ? (
-                                                        <Loader2 className="w-4 h-4 animate-spin text-deep-brown" />
+                                                        <Loader2 className="w-5 h-5 animate-spin text-deep-brown" />
                                                     ) : (
-                                                        <Minus className="w-4 h-4 text-deep-brown" />
+                                                        <Minus className="w-5 h-5 text-deep-brown" />
                                                     )}
                                                 </button>
-                                                <span className="px-4 py-2 text-deep-brown font-medium min-w-[3rem] text-center">
+                                                <span className="px-6 py-3 text-deep-brown text-xl font-bold tracking-tight min-w-[4rem] text-center">
                                                     {item.quantity}
                                                 </span>
                                                 <button
                                                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                    className="p-2 hover:bg-sage-green/10 transition-colors rounded-r-lg"
+                                                    className="p-3 hover:bg-sage-green/10 transition-all duration-300 hover:scale-110"
                                                     disabled={updating === item.id}
                                                 >
-                                                    <Plus className="w-4 h-4 text-deep-brown" />
+                                                    <Plus className="w-5 h-5 text-deep-brown" />
                                                 </button>
                                             </div>
 
                                             <div className="text-right">
-                                                <div className="font-bold text-xl text-sanctuary-green">
+                                                <div className="text-3xl font-bold text-sanctuary-green mb-2">
                                                     ${item.estimatedCost.totalAmount.amount}
                                                 </div>
                                                 <button
                                                     onClick={() => updateQuantity(item.id, 0)}
-                                                    className="flex items-center space-x-1 text-red-600 hover:text-red-800 transition-colors text-sm mt-1"
+                                                    className="flex items-center gap-2 text-red-600 hover:text-red-800 transition-colors duration-300 text-base font-light"
                                                     disabled={updating === item.id}
                                                 >
-                                                    <Trash2 className="w-3 h-3" />
+                                                    <Trash2 className="w-4 h-4" />
                                                     <span>Remove</span>
                                                 </button>
                                             </div>
@@ -288,62 +309,72 @@ export default function CartPage() {
                         ))}
 
                         {/* Continue Shopping */}
-                        <div className="pt-4">
+                        <div
+                            className="pt-4"
+                            style={{
+                                animation: mounted ? `fadeInUp 0.4s ease-out ${0.1 + cartItems.length * 0.05}s both` : 'none'
+                            }}
+                        >
                             <Link
                                 href="/games"
-                                className="inline-flex items-center space-x-2 text-warm-cream hover:text-mint-whisper font-medium transition-colors group"
+                                className="inline-flex items-center gap-2 text-warm-cream hover:text-mint-whisper text-lg font-light transition-colors duration-300 group"
                             >
-                                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
                                 <span>Continue Shopping</span>
                             </Link>
                         </div>
                     </div>
 
                     {/* Order Summary */}
-                    <div className="space-y-6">
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-sage-green/20">
-                            <h3 className="font-semibold text-deep-brown mb-4 flex items-center space-x-2">
-                                <Gift className="w-5 h-5 text-primary" />
+                    <div
+                        className="space-y-8"
+                        style={{
+                            animation: mounted ? 'fadeInUp 0.4s ease-out 0.2s both' : 'none'
+                        }}
+                    >
+                        <div className="bg-white p-8 lg:p-10 rounded-2xl shadow-sm border border-gray-100">
+                            <h3 className="text-2xl font-bold tracking-tight text-deep-brown mb-6 flex items-center gap-3">
+                                <Gift className="w-7 h-7 text-primary" />
                                 <span>Order Summary</span>
                             </h3>
 
-                            <div className="space-y-3 mb-6">
-                                <div className="flex justify-between text-deep-brown">
+                            <div className="space-y-4 mb-8">
+                                <div className="flex justify-between text-lg text-gray-600 font-light">
                                     <span>Subtotal ({cart?.totalQuantity} items):</span>
-                                    <span>${subtotal.toFixed(2)}</span>
+                                    <span className="font-bold text-deep-brown">${subtotal.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-deep-brown">
+                                <div className="flex justify-between text-lg text-gray-600 font-light">
                                     <span>Shipping:</span>
-                                    <span>${shipping.toFixed(2)}</span>
+                                    <span className="font-bold text-deep-brown">${shipping.toFixed(2)}</span>
                                 </div>
-                                <div className="border-t border-sage-green/30 pt-3">
-                                    <div className="flex justify-between font-bold text-lg text-deep-brown">
-                                        <span>Total:</span>
-                                        <span className="text-sanctuary-green">${total.toFixed(2)}</span>
+                                <div className="border-t-2 border-gray-100 pt-4">
+                                    <div className="flex justify-between items-baseline">
+                                        <span className="text-2xl font-bold tracking-tight text-deep-brown">Total:</span>
+                                        <span className="text-3xl font-bold text-sanctuary-green">${total.toFixed(2)}</span>
                                     </div>
                                 </div>
                             </div>
 
                             <button
                                 onClick={handleCheckout}
-                                className="w-full bg-primary text-warm-cream py-4 rounded-lg font-semibold hover:bg-primary-dark transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group mb-4"
+                                className="w-full bg-primary text-warm-cream py-5 rounded-2xl text-lg font-bold tracking-tight hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-3 group mb-6"
                             >
-                                <Shield className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                <Shield className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
                                 <span>Secure Checkout</span>
                             </button>
 
                             {/* Trust Badges */}
-                            <div className="space-y-2 text-sm text-deep-brown/60">
-                                <div className="flex items-center space-x-2">
-                                    <Shield className="w-4 h-4 text-sage-green" />
+                            <div className="space-y-3 text-base text-gray-600 font-light">
+                                <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-sage-green/5 to-mint-whisper/5 border border-gray-100">
+                                    <Shield className="w-5 h-5 text-sage-green" />
                                     <span>Secure SSL encryption</span>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <Truck className="w-4 h-4 text-sage-green" />
+                                <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-sage-green/5 to-mint-whisper/5 border border-gray-100">
+                                    <Truck className="w-5 h-5 text-sage-green" />
                                     <span>Fast & reliable shipping</span>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <CheckCircle className="w-4 h-4 text-sage-green" />
+                                <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-sage-green/5 to-mint-whisper/5 border border-gray-100">
+                                    <CheckCircle className="w-5 h-5 text-sage-green" />
                                     <span>{companyConfig.policies.returnDays}-day return policy</span>
                                 </div>
                             </div>
